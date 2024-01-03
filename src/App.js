@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MascotasComponent from './Components/MascotasComponent.js';
 import VerMascotasComponent from './Components/VerMascotasComponent.js';
 import DetallesMascotasComponent from './Components/DetallesMascotasComponent.js';
+import LoginAdminComponent from './Components/LoginAdminComponent.js';
 
 // Estilos de la aplicación
 import './App.css';
@@ -22,6 +23,9 @@ function App() {
         
         {/* Ruta para ver detalles de una mascota específica */}
         <Route path='/detalles/:id' element={<DetallesMascotasComponent></DetallesMascotasComponent>}></Route>
+
+        {/* Ruta para ir al login */}
+        <Route path='/login' element={<LoginAdminComponent></LoginAdminComponent>}></Route>
       </Routes>
     </BrowserRouter>
   );

@@ -7,6 +7,7 @@ import withReactContent from "sweetalert2-react-content";  // Importa withReactC
 import ReactPaginate from "react-paginate";  // Importa ReactPaginate para implementar la paginación en React
 import './styles.css';  // Importa un archivo de estilos CSS
 import 'bootstrap/dist/css/bootstrap.min.css';  // Importa el estilo CSS de Bootstrap
+import { Link } from "react-router-dom"; // Componente para navegar entre rutas
 
 // CUERPO DEL COMPONENTE MascotasComponent
 const MascotasComponent = () => {
@@ -26,16 +27,28 @@ const MascotasComponent = () => {
   const [pageNumber, setPageNumber] = useState(0);  // Estado para el número de página actual en la paginación
   const mascotasPerPage = 3;  // Número de mascotas por página
 
+  const [busqueda, setBusqueda] = useState("");
+
   // Efecto de montaje: se ejecuta una vez al cargar el componente
   useEffect(() => {
     getMascotas();  // Llama a la función getMascotas al cargar el componente
   }, []);
 
-  // Función asincrónica para obtener la lista de mascotas desde el servidor
+  // Esta función asincrónica utiliza axios para realizar una solicitud GET al servidor y obtener la lista de mascotas.
+  // Utiliza el término de búsqueda proporcionado en el estado 'busqueda' para filtrar los resultados.
   const getMascotas = async () => {
-    const respuesta = await axios.get(`${url}/buscar`);  // Hace una solicitud GET al servidor
-    setMascotas(respuesta.data);  // Actualiza el estado de las mascotas con los datos obtenidos
+    try {
+        // Realizar la solicitud GET al servidor con el término de búsqueda
+        const respuesta = await axios.get(`${url}/buscar?termino=${busqueda}`);
+
+        // Actualizar el estado 'mascotas' con los datos recibidos del servidor
+        setMascotas(respuesta.data);
+    } catch (error) {
+        // Manejar errores en caso de que la solicitud no sea exitosa
+        console.error("Error al obtener las mascotas:", error);
+    }
   };
+
 
   // Función para abrir el modal de mascotas
   const openModal = (opcion, id, nombre, edad, raza, imagen, descripcion1, descripcion2) => {
@@ -189,6 +202,31 @@ const MascotasComponent = () => {
   // Renderiza la interfaz de usuario del componente
   return (
     <div className="App">
+
+      {/* Sección para mostrar el logo o imagen de la página */}
+      <div class="d-flex align-items-center justify-content-between">
+            <img src="/logo.png" alt="Logo o imagen de la página" style={{ width: '145px', height: '145px' }} />
+
+            <form class="d-flex" role="search" style={{ flex: '1' }}>
+                <input
+                    class="form-control me-2"
+                    type="search"
+                    placeholder="Buscar por nombre o raza"
+                    aria-label="Search"
+                    style={{ width: '100%' }}
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                />
+                <button class="btn btn-success" type="button" onClick={getMascotas}>
+                    Buscar
+                </button>
+            </form>
+
+            <Link to={`/`} className="btn btn-danger ms-2">
+              <i className="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </Link>
+        </div>
+
       <div className="container-fluid">
         {/* Sección para agregar una nueva mascota */}
         <div className="row mt-3">

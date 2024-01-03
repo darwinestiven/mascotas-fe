@@ -17,6 +17,9 @@ const VerMascotasComponent = () => {
   const [telefono, setTelefono] = useState("");
   const [titulo, setTitulo] = useState("");
 
+  const [busqueda, setBusqueda] = useState("");
+
+
   // Estados y funciones para la paginación
   const [pageNumber, setPageNumber] = useState(0);
   const mascotasPerPage = 3;
@@ -29,21 +32,24 @@ const VerMascotasComponent = () => {
   // Función asincrónica para obtener la información de las mascotas
   const getMascotas = async () => {
     try {
-      const respuesta = await axios.get(`${url}/buscar`);
-      setMascotas(respuesta.data); // Actualiza el estado con la información de las mascotas
+      const respuesta = await axios.get(`${url}/buscar?termino=${busqueda}`);
+      setMascotas(respuesta.data);
     } catch (error) {
       console.error("Error al obtener las mascotas:", error);
     }
   };
+  
 
   // Función para manejar el cambio de página en la paginación
   const handlePageChange = ({ selected }) => {
     setPageNumber(selected);
   };
 
+  
   // Calcula el número total de páginas requeridas para la paginación
-  const pageCount = Math.ceil(mascotas.length / mascotasPerPage);
-  const offset = pageNumber * mascotasPerPage; // Calcula el índice de inicio de las mascotas en la página actual
+    const pageCount = Math.ceil(mascotas.length / mascotasPerPage);
+    const offset = pageNumber * mascotasPerPage;
+
 
   // Función para abrir el modal de adopción con los datos de una mascota específica
   const openModal = (mascotaId) => {
@@ -101,16 +107,31 @@ const VerMascotasComponent = () => {
 
   return (
     <div className="App">
-      <br/>
-      {/* Sección para mostrar el logo o imagen de la página */}
-      <div>
-        <img
-          src="/logo.png"
-          alt="Logo o imagen de la página"
-          style={{ width: '145px', height: '145px' }}
-        />
-      </div>
-  
+        <br/>
+        {/* Sección para mostrar el logo o imagen de la página */}
+        <div class="d-flex align-items-center justify-content-between">
+            <img src="/logo.png" alt="Logo o imagen de la página" style={{ width: '145px', height: '145px' }} />
+
+            <form class="d-flex" role="search" style={{ flex: '1' }}>
+                <input
+                    class="form-control me-2"
+                    type="search"
+                    placeholder="Buscar por nombre o raza"
+                    aria-label="Search"
+                    style={{ width: '100%' }}
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                />
+                <button class="btn btn-success" type="button" onClick={getMascotas}>
+                    Buscar
+                </button>
+            </form>
+
+            <Link to="/login">
+                <img src="/login.png" alt="Login de la página" style={{ width: '80px', height: '80px', marginLeft: '20px', cursor: 'pointer' }} />
+            </Link>
+        </div>
+
       {/* Contenedor principal */}
       <div className="container-fluid">
         <div className="row mt-3">
@@ -127,6 +148,7 @@ const VerMascotasComponent = () => {
                       alt=""
                       style={{ objectFit: 'cover', height: '220px' }}
                     />
+                    
                     <div className="card-body">
                       {/* Muestra información básica de la mascota */}
                       <h5 className="card-title">{mascota.nombre}</h5>
